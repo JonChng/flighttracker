@@ -31,6 +31,7 @@ class FlightSearch:
         addition = "search"
         function_endpoint = END_POINT + addition
         tomorrow = dt.datetime.now()
+        return_from = tomorrow + relativedelta(days=+1)
         end_date = tomorrow + relativedelta(months=+6)
 
         params = {
@@ -38,11 +39,14 @@ class FlightSearch:
             "fly_to":dest,
             "date_from":tomorrow.strftime("%d/%m/%Y"),
             "date_to":end_date.strftime("%d/%m/%Y"),
+            "return_from":return_from.strftime("%d/%m/%Y"),
+            "return_to":end_date.strftime("%d/%m/%Y"),
             "select_airlines":"SQ,EK,QR,TR,CX,AY,LX,AF",
-            "select_airlines_exclude":False
+            "select_airlines_exclude":False,
+            "flight_type":"round"
         }
 
         response = requests.get(url=function_endpoint, params=params, headers=self.headers)
-        price_data = response.json()['data'][0]
-        return price_data
+        price_data = response.json()
+        return price_data['data'][0]
 
