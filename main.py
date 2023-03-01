@@ -10,17 +10,34 @@ dm = DataManager(os.environ["SHEETY_API"])
 fs = FlightSearch(os.environ['KIWI_API'])
 
 sheet_data = dm.get_data()
-for i in range(len(sheet_data)):
 
-    id = sheet_data[i]['id']
-    to_search = sheet_data[i]['city']
-    code = fs.iata_code(to_search)
-    data = {
-        "city": sheet_data[i]['city'],
-        "iataCode":code,
-        "lowestPrice":sheet_data[i]['lowestPrice']
-    }
-    dm.update_iata(id, data)
+def update_code():
+    for i in sheet_data:
+        id = i['id']
+        to_search = i['city']
+        code = fs.iata_code(to_search)
+        data = {
+            "city": i['city'],
+            "iataCode": code,
+            "lowestPrice": i['lowestPrice']
+        }
+        dm.update_sheet(id, data)
+
+def find_flights():
+    for i in sheet_data:
+        price = i['lowestPrice']
+        cheapest_found = fs.flight_search(i['iataCode'])
+        cheapest_price = cheapest_found['price']
+
+        if cheapest_price < price:
+            print("CHEAP!")
+            data = {
+                "city": i['city'],
+                "iataCode": i['iataCode'],
+                "lowestPrice": cheapest_price
+            }
+            dm.update_sheet(i['id'], data)
+
 
 
 

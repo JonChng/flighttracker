@@ -10,7 +10,7 @@ class DataManager:
         response = requests.get(self.endpoint)
         return response.json()['prices']
 
-    def update_iata(self, row, data):
+    def update_sheet(self, row, data):
         new_endpoint = self.endpoint + str(row)
         data = {
             "price": data
