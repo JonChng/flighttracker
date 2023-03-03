@@ -1,15 +1,18 @@
 #This file will need to use the DataManager,FlightSearch, FlightData, NotificationManager classes to achieve the program requirements.
 from flight_search import FlightSearch
 from data_manager import DataManager
-from flight_data import FlightData
 from notification_manager import NotificationManager
+import requests
 import dotenv
 import os
 
 dotenv.load_dotenv()
 
+
 dm = DataManager(os.environ["SHEETY_API"])
 fs = FlightSearch(os.environ['KIWI_API'])
+email = os.environ["EMAIL"]
+password = os.environ["PASSWORD"]
 
 sheet_data = dm.get_data()
 
@@ -57,8 +60,13 @@ def find_flights():
                 cheapest_found['stopovers'] = stopovers
                 cheapest_found['via_city'] = cheapest_found['route'][0]['flyTo']
 
+
             dm.update_sheet(i['id'], data)
-            NotificationManager(os.environ["TWILIO_ID"], os.environ["TWILIO_API"], cheapest_found, os.environ['TWILIO_NO'], os.environ["MY_NO"])
+
+            d1 = requests.get(url=f"https://api.sheety.co/{os.environ['SHEETY_API']}/flightDeals/users")
+            data = d1.json()['users']
+            print(data)
+            NotificationManager(cheapest_found, email, password, data)
 
 update_code()
 find_flights()

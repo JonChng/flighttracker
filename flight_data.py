@@ -12,4 +12,5 @@ class FlightData:
         self.airline = data['airlines'][0]
         self.stopovers = data['stopovers']
         self.via_city = data['via_city']
+        self.booking = data['deep_link']
 
