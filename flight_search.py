@@ -14,6 +14,7 @@ class FlightSearch:
         }
         self.fly_from = "SIN"
 
+
     def iata_code(self, city_name):
         addition = "locations/query"
         function_endpoint = END_POINT + addition
@@ -25,9 +26,10 @@ class FlightSearch:
 
         data = requests.get(url=function_endpoint, params=params, headers=self.headers)
         data.raise_for_status()
+        print(data.json())
         return data.json()['locations'][0]['city']['code']
 
-    def flight_search(self, dest):
+    def flight_search(self, dest, stopovers=0, via_city=""):
         addition = "search"
         function_endpoint = END_POINT + addition
         tomorrow = dt.datetime.now()
@@ -43,10 +45,24 @@ class FlightSearch:
             "return_to":end_date.strftime("%d/%m/%Y"),
             "select_airlines":"SQ,EK,QR,TR,CX,AY,LX,AF",
             "select_airlines_exclude":False,
-            "flight_type":"round"
+            "flight_type":"round",
+            "curr":"SGD",
+            "max_stopovers":stopovers,
+            "via_city":via_city
         }
 
         response = requests.get(url=function_endpoint, params=params, headers=self.headers)
         price_data = response.json()
-        return price_data['data'][0]
+
+        try:
+            return price_data['data'][0]
+
+        except IndexError:
+            data = []
+            return data
+
+
+
+
+
 

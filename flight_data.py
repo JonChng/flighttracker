@@ -10,3 +10,6 @@ class FlightData:
         self.from_date = dt.datetime.fromtimestamp(data['dTime']).strftime('%d-%m-%Y')
         self.to_date = (dt.datetime.fromtimestamp(data['dTime']) + dt.timedelta(days = data['nightsInDest'] + 1)).strftime('%d-%m-%Y')
         self.airline = data['airlines'][0]
+        self.stopovers = data['stopovers']
+        self.via_city = data['via_city']
+

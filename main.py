@@ -36,6 +36,13 @@ def find_flights():
 
         price = i['lowestPrice']
         cheapest_found = fs.flight_search(i['iataCode'])
+
+        stopovers = 0
+        while cheapest_found == []:
+            stopovers += 1
+            cheapest_found = fs.flight_search(i['iataCode'], stopovers=stopovers)
+
+
         cheapest_price = cheapest_found['price']
 
         if cheapest_price < price:
@@ -46,6 +53,10 @@ def find_flights():
                 "iataCode": i['iataCode'],
                 "lowestPrice": cheapest_price
             }
+            if stopovers >= 1:
+                cheapest_found['stopovers'] = stopovers
+                cheapest_found['via_city'] = cheapest_found['route'][0]['flyTo']
+
             dm.update_sheet(i['id'], data)
             NotificationManager(os.environ["TWILIO_ID"], os.environ["TWILIO_API"], cheapest_found, os.environ['TWILIO_NO'], os.environ["MY_NO"])
 
