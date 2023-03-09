@@ -15,23 +15,34 @@ class NotificationManager(FlightData):
 
         currency = "EUR"
 
-        if self.stopovers >= 1:
+        msg =f"Subject:New Low Price Flight!\n\nLow price alert! Only {price} SGD to fly from Singapore-SIN to {self.city_to}-{self.fly_to}! from {self.from_date} to {self.to_date} on {self.airline}. " \
+             f"\n\n{link}"
+        msg = msg.encode('ascii', "ignore")
 
+        try:
+            if self.stopovers >= 1:
+
+                for i in to:
+                    print(i)
+                    with smtplib.SMTP("smtp.gmail.com") as connection:
+                        connection.starttls()
+                        connection.login(user=email, password=password)
+                        connection.sendmail(to_addrs=i['email'], from_addr=email, msg=msg)
+            else:
+                for i in to:
+                    with smtplib.SMTP("smtp.gmail.com") as connection:
+                        connection.starttls()
+                        connection.login(user=email, password=password)
+                        connection.sendmail(to_addrs=i['email'], from_addr=email,
+                                            msg=msg)
+        except AttributeError:
             for i in to:
                 print(i)
                 with smtplib.SMTP("smtp.gmail.com") as connection:
                     connection.starttls()
                     connection.login(user=email, password=password)
-                    connection.sendmail(to_addrs=i['email'], from_addr=email, msg=f"Subject:New Low Price Flight!\n\nLow price alert! Only {price} SGD to fly from Singapore-SIN to {self.city_to}-{self.fly_to}! from {self.from_date} to {self.to_date} on {self.airline}."
-                                                                          f"\n\n{link}")
-        else:
-            for i in to:
-                with smtplib.SMTP("smtp.gmail.com") as connection:
-                    connection.starttls()
-                    connection.login(user=email, password=password)
-                    connection.sendmail(to_addrs=i['email'], from_addr=email,
-                                        msg=f"Subject:New Low Price Flight!\n\nLow price alert! Only {price} SGD to fly from Singapore-SIN to {self.city_to}-{self.fly_to}! from {self.from_date} to {self.to_date} on {self.airline}."
-                                            f"{link}")
+                    connection.sendmail(to_addrs=i['email'], from_addr=email, msg=msg)
+
 
 
 

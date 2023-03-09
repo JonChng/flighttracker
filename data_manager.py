@@ -8,6 +8,7 @@ class DataManager:
 
     def get_data(self):
         response = requests.get(self.endpoint)
+        print(response.json())
         return response.json()['prices']
 
     def update_sheet(self, row, data):

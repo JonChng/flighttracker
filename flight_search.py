@@ -32,7 +32,8 @@ class FlightSearch:
     def flight_search(self, dest, stopovers=0, via_city=""):
         addition = "search"
         function_endpoint = END_POINT + addition
-        tomorrow = dt.datetime.now()
+        # tomorrow = dt.datetime.now()
+        tomorrow = dt.datetime.strptime("14/02/2024", "%d/%m/%Y")
         return_from = tomorrow + relativedelta(days=+1)
         end_date = tomorrow + relativedelta(months=+6)
 
@@ -57,7 +58,7 @@ class FlightSearch:
         try:
             return price_data['data'][0]
 
-        except IndexError:
+        except (IndexError, KeyError) as Error:
             data = []
             return data
 
